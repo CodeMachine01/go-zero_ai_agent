@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/sashabaranov/go-openai"
 	"io"
+	"strings"
 
 	"GoAgent/api/internal/svc"
 	"GoAgent/api/internal/types"
@@ -33,22 +34,24 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 	go func() {
 		defer close(ch)
 
-		//构建聊天历史（可以根据chatId从数据库获取历史记录）
-		messages := []openai.ChatCompletionMessage{
-			{
-				Role:    openai.ChatMessageRoleSystem,
-				Content: "你是一个专业的Go语言面试官，负责评估候选人的Go语言能力。请提出有深度的问题并评估回答。",
-			},
-			{
-				Role:    openai.ChatMessageRoleUser,
-				Content: req.Message,
-			},
+		//获取或创建会话
+		session, err := l.svcCtx.SessionStore.GetSession(req.ChatId)
+		if err != nil {
+			l.Logger.Errorf("获取会话失败：: %v", err)
+			return
 		}
+
+		//添加用户消息到会话历史
+		userMessage := openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleUser,
+			Content: req.Message,
+		}
+		session.Messages = append(session.Messages, userMessage)
 
 		//创建OpenAI请求
 		request := openai.ChatCompletionRequest{
 			Model:       l.svcCtx.Config.OpenAI.Model,
-			Messages:    messages,
+			Messages:    session.Messages, //使用会话历史
 			Stream:      true,
 			MaxTokens:   l.svcCtx.Config.OpenAI.MaxTokens,
 			Temperature: l.svcCtx.Config.OpenAI.Temperature,
@@ -62,6 +65,9 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 		}
 		defer stream.Close()
 
+		//收集完整响应内容
+		var fullResponse strings.Builder
+
 		for {
 			select {
 			case <-l.ctx.Done(): //上下文取消
@@ -69,6 +75,16 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 			default:
 				response, err := stream.Recv()
 				if errors.Is(err, io.EOF) {
+					//流结束后保存会话
+					assistantMessge := openai.ChatCompletionMessage{
+						Role:    openai.ChatMessageRoleAssistant,
+						Content: fullResponse.String(), //累积完整响应
+					}
+					session.Messages = append(session.Messages, assistantMessge)
+					//持久化对话
+					if err := l.svcCtx.SessionStore.SaveSession(req.ChatId, session); err != nil {
+						l.Logger.Errorf("保存会话失败：: %v", err)
+					}
 					//发送结束标记
 					ch <- &types.ChatResponse{IsLast: true}
 					return
@@ -80,9 +96,14 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 
 				if len(response.Choices) > 0 {
 					content := response.Choices[0].Delta.Content
-					ch <- &types.ChatResponse{
-						Content: content,
-						IsLast:  false,
+					if content != "" {
+						//收集完整响应
+						fullResponse.WriteString(content)
+
+						ch <- &types.ChatResponse{
+							Content: content,
+							IsLast:  false,
+						}
 					}
 				}
 			}
