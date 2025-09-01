@@ -9,3 +9,15 @@ OpenAI:
   Model: "qwen-plus"
   MaxTokens: 2048 #最大token数
   Temperature: 0.7 #温度参数
+
+#向量数据库配置
+VectorDB:
+  Host: "127.0.0.1"
+  Port: 5432
+  DBName: "dayu_ai_agent"
+  User: "root"
+  Password: "123456"
+  Table: "vector_store"
+  MaxConn: 20 #最大连接数
+  EmbeddingModel: "text-embedding-v1" #嵌入模型
+
