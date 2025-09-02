@@ -19,7 +19,8 @@ type Config struct {
 		FrequencyPenalty float32 `json:"frequencyPenalty"` //频率惩罚（-2.0到2.0）
 		Seed             *int    `json:"seed"`             //随机种子（-1表示随机）
 	}
-	VectorDB VectorDBConfig //向量数据库配置
+	VectorDB      VectorDBConfig //向量数据库配置
+	UniPDFLicense string
 }
 
 // 向量数据库配置

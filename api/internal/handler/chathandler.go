@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"GoAgent/api/internal/utils"
 	"context"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 	"strings"
 
@@ -27,6 +29,30 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
+
+		//处理PDF文件（如果有）
+		var pdfContent string
+		if file, header, err := r.FormFile("file"); err == nil {
+			defer file.Close()
+
+			//验证文件类型
+			if header.Header.Get("Content-Type") != "application/pdf" {
+				http.Error(w, "仅支持PDF文件", http.StatusBadRequest)
+				return
+			}
+
+			//使用UniPDF提取文本
+			if content, err := utils.ExtractPDFText(file); err == nil {
+				pdfContent = content
+			} else {
+				logx.Error("PDF提取失败：%v", err)
+			}
+		}
+
+		//拼接消息
+		req.Message = utils.CombineMessages(req.Message, pdfContent)
+		fmt.Println("req.Message++++++7777:", pdfContent)
+		fmt.Println("req.Message++++++6666:", req.Message)
 
 		//创建取消上下文
 		ctx, cancel := context.WithCancel(r.Context())
