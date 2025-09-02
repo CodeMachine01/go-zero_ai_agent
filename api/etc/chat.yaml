@@ -3,12 +3,29 @@ Host: 0.0.0.0
 Port: 8123
 Timeout: 0 #禁用超时
 
+#OpenAI:
+#  ApiKey: "sk-ee98abea01524865954bb25fb579c1ef"
+#  BaseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+#  Model: "qwen-plus"
+#  MaxTokens: 2048 #最大token数
+#  Temperature: 0.7 #温度参数
+
 OpenAI:
-  ApiKey: "sk-ee98abea01524865954bb25fb579c1ef"
-  BaseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1"
-  Model: "qwen-plus"
-  MaxTokens: 2048 #最大token数
-  Temperature: 0.7 #温度参数
+  ApiKey: ""
+  BaseURL: "http://localhost:11434/v1"  #Ollama默认本地地址
+  Model: "deepseek-r1:7b"
+  EmbeddingModel: "nomic-embed-text"
+
+  #核心生成参数
+  MaxTokens: 2048     #最大生成token数
+  Temperature: 0.7    #温度参数（0-2，越高越随机）
+  TopP: 0.9           #核心采样参数
+  FrequencyPenalty: 0 #频率惩罚
+  PresencePenalty: 0  #存在惩罚
+
+  #调试参数
+  Seed: -1    #随机种子（-1=随机）
+
 
 #向量数据库配置
 VectorDB:
@@ -19,5 +36,8 @@ VectorDB:
   Password: "123456"
   Table: "vector_store"
   MaxConn: 20 #最大连接数
-  EmbeddingModel: "text-embedding-v1" #嵌入模型
+#  EmbeddingModel: "text-embedding-v1" #嵌入模型
+  EmbeddingModel: "nomic-embed-text"
+
+
 

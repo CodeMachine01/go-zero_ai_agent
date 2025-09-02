@@ -18,8 +18,8 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		//设置SSE响应头
 		setSSEHeader(w)
 		flusher, _ := w.(http.Flusher)
-		//立即刷新头部
-		flusher.Flush()
+		////立即刷新头部
+		//flusher.Flush()		//前端改为post请求后删除刷新
 
 		//处理请求
 		var req types.InterviewAPPChatReq
@@ -47,7 +47,7 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				return
 			case resp, ok := <-respChan:
 				if !ok {
-					fmt.Fprint(w, "event: end\ndata:{}\n\n") //结束标记
+					//fmt.Fprint(w, "event: end\ndata:{}\n\n") //结束标记
 					flusher.Flush()
 					return
 				}
@@ -56,7 +56,11 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				safeContent := strings.ReplaceAll(resp.Content, "\n", "\\n")
 				safeContent = strings.ReplaceAll(safeContent, "\r", "\\r")
 				//直接输出内容，不加JSON包装
-				fmt.Fprintf(w, "data:%s\n\n", safeContent)
+				//fmt.Fprintf(w, "data:%s\n\n", safeContent)
+				_, err := fmt.Fprintf(w, "data: %s\n\n", safeContent)
+				if err != nil {
+					return
+				}
 				flusher.Flush()
 
 				if resp.IsLast {

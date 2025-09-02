@@ -13,9 +13,14 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	//创建OpenAI客户端
-	openaiConfig := openai.DefaultConfig(c.OpenAI.ApiKey)
-	openaiConfig.BaseURL = c.OpenAI.BaseURL
+	////创建OpenAI客户端
+	//openaiConfig := openai.DefaultConfig(c.OpenAI.ApiKey)
+	//openaiConfig.BaseURL = c.OpenAI.BaseURL
+	//openAIClient := openai.NewClientWithConfig(openaiConfig)
+
+	//ollama deepseek r1 7b客户端
+	openaiConfig := openai.DefaultConfig("") //Ollama无需密钥
+	openaiConfig.BaseURL = c.OpenAI.BaseURL  //指向本地Ollama
 	openAIClient := openai.NewClientWithConfig(openaiConfig)
 
 	//初始化向量存储
