@@ -56,7 +56,10 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				safeContent := strings.ReplaceAll(resp.Content, "\n", "\\n")
 				safeContent = strings.ReplaceAll(safeContent, "\r", "\\r")
 				//直接输出内容，不加JSON包装
-				fmt.Fprintf(w, "data:%s\n\n", safeContent)
+				_, err := fmt.Fprintf(w, "data:%s\n\n", safeContent)
+				if err != nil {
+					return
+				}
 				flusher.Flush()
 
 				if resp.IsLast {
