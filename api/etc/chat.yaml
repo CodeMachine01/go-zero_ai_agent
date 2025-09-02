@@ -38,7 +38,10 @@ VectorDB:
   MaxConn: 20 #最大连接数
 #  EmbeddingModel: "text-embedding-v1" #嵌入模型
   EmbeddingModel: "nomic-embed-text"
-
+  Knowledge:
+    MaxChunkSize: 1000 #知识块最大长度
+    TopK: 3 #检索返回的知识片段数量
+    MaxContextLength: 500 #注入上下文的截断长度
 #UniPDF商业版许可证密钥
 UniPDFLicense: "dd39be18840a359c5d2782bdb4135d1b1e79cbe831702051e43932e523c12f57"
 

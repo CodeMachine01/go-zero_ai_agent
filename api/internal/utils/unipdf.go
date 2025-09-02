@@ -54,3 +54,32 @@ func CombineMessages(userMsg, pdfContent string) string {
 	}
 	return userMsg + "\n[PDF内容开始]" + pdfContent + "[PDF内容结束]"
 }
+
+// 将文本分割为指定大小的块
+func SplitText(text string, maxChunkSize int) []string {
+	var chunks []string
+	if text == "" {
+		return chunks
+	}
+
+	runes := []rune(text)
+	totalLength := len(runes)
+
+	for i := 0; i < totalLength; i += maxChunkSize {
+		end := i + maxChunkSize
+		if end > totalLength {
+			end = totalLength
+		}
+		chunks = append(chunks, string(runes[i:end]))
+	}
+	return chunks
+}
+
+// 截断文本到指定长度
+func TruncateText(text string, maxLen int) string {
+	runes := []rune(text)
+	if len(runes) > maxLen {
+		return text
+	}
+	return string(runes[:maxLen]) + "..."
+}
