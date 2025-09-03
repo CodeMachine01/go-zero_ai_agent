@@ -4,7 +4,6 @@ import (
 	"GoAgent/api/internal/logic"
 	"GoAgent/api/internal/svc"
 	"GoAgent/api/internal/types"
-	"GoAgent/api/internal/utils"
 	"errors"
 	"fmt"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -29,11 +28,15 @@ func KnowledgeUploadHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.Error(w, errors.New("仅支持PDF问价"))
 			return
 		}
-		//提取文本
-		content, err := utils.ExtractPDFText(file)
+		////提取文本
+		//content, err := utils.ExtractPDFText(file)
+		//if err != nil {
+		//	httpx.Error(w, err)
+		//	return
+		//}
+		content, err := svcCtx.PdfClient.ExtractText(file, header.Filename)
 		if err != nil {
 			httpx.Error(w, err)
-			return
 		}
 		//获取标题（使用文件名）
 		title := header.Filename

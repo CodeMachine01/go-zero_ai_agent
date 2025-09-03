@@ -1,0 +1,1 @@
+go run chat.go -f ./etc/chat.yaml    

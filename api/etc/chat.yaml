@@ -45,4 +45,5 @@ VectorDB:
 #UniPDF商业版许可证密钥
 UniPDFLicense: "dd39be18840a359c5d2782bdb4135d1b1e79cbe831702051e43932e523c12f57"
 
-
+MCP:
+  Endpoint: 127.0.0.1:8080 #MCP服务地址

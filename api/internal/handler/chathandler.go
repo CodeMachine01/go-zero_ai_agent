@@ -42,10 +42,16 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			}
 
 			//使用UniPDF提取文本
-			if content, err := utils.ExtractPDFText(file); err == nil {
+			//if content, err := utils.ExtractPDFText(file); err == nil {
+			//	pdfContent = content
+			//} else {
+			//	logx.Error("PDF提取失败：%v", err)
+			//}
+
+			if content, err := svcCtx.PdfClient.ExtractText(file, header.Filename); err == nil {
 				pdfContent = content
 			} else {
-				logx.Error("PDF提取失败：%v", err)
+				logx.Errorf("PDF提取失败：%v", err)
 			}
 		}
 

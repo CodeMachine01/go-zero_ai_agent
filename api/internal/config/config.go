@@ -4,6 +4,9 @@ import "github.com/zeromicro/go-zero/rest"
 
 type Config struct {
 	rest.RestConf
+	MCP struct {
+		Endpoint string
+	}
 	OpenAI struct {
 		//基础配置
 		ApiKey         string `json:"apiKey"`         //API密钥（本地部署留空）

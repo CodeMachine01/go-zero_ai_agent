@@ -2,9 +2,7 @@ package svc
 
 import (
 	"GoAgent/api/internal/config"
-	"fmt"
 	openai "github.com/sashabaranov/go-openai"
-	"github.com/unidoc/unipdf/v3/common/license"
 	"log"
 )
 
@@ -12,6 +10,7 @@ type ServiceContext struct {
 	Config       config.Config
 	OpenAIClient *openai.Client
 	VectorStore  *VectorStore
+	PdfClient    *PdfClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -31,12 +30,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		log.Fatalf("初始化向量数据库失败: %v", err)
 	}
 
-	//设置UniPDF key
-	err = license.SetMeteredKey(c.UniPDFLicense)
-	if err != nil {
-		fmt.Printf("设置UniPDF许可证失败：: %v\n", err)
-		//如果没有授权，UniPDF会添加水印
-	}
+	////设置UniPDF key
+	//err = license.SetMeteredKey(c.UniPDFLicense)
+	//if err != nil {
+	//	fmt.Printf("设置UniPDF许可证失败：: %v\n", err)
+	//	//如果没有授权，UniPDF会添加水印
+	//}
 
 	//测试数据库连接
 	if err := vectorStore.TestConnection(); err != nil {
@@ -49,5 +48,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:       c,
 		OpenAIClient: openAIClient,
 		VectorStore:  vectorStore,
+		PdfClient:    NewPdfClient(c.MCP.Endpoint),
 	}
 }
