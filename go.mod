@@ -1,6 +1,6 @@
 module GoAgent
 
-go 1.24.4
+go 1.24.3
 
 require (
 	github.com/sashabaranov/go-openai v1.41.1
