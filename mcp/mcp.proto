@@ -1,0 +1,34 @@
+syntax="proto3";
+
+package mcp;
+
+option go_package="./mcp";
+
+//PDF处理服务定义
+service PdfProcessor{
+  //流式上传PDF并返回解析文本
+  rpc ExtractText(stream PdfRequest) returns (PdfResponse){}
+}
+
+//请求消息（分块传输）
+message PdfRequest{
+  oneof data{
+    Metadata metadata=1; //首条消息包含元数据
+    bytes chunk=2; //后续消息为数据块
+  }
+}
+
+//响应消息
+message PdfResponse{
+  string content=1; //解析后的文本内容
+  string error=2;   //错误信息
+}
+
+//文件元数据
+message Metadata{
+  string filename=1;
+  string mime_type=2;
+}
+
+//生成gRPC代码在/mcp目录执行
+//goctl rpc protoc mcp.proto --go_out=./types --go-grpc_out=./types --zrpc_out=.
