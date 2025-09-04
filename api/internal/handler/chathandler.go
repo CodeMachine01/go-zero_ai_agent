@@ -57,8 +57,8 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		//拼接消息
 		req.Message = utils.CombineMessages(req.Message, pdfContent)
-		fmt.Println("req.Message++++++7777:", pdfContent)
-		fmt.Println("req.Message++++++6666:", req.Message)
+		fmt.Println("pdf解析的内容； ", pdfContent)
+		fmt.Println("用户发送的内容：", req.Message)
 
 		//创建取消上下文
 		ctx, cancel := context.WithCancel(r.Context())
