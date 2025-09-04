@@ -2,7 +2,7 @@ Name: mcp.rpc
 ListenOn: 0.0.0.0:8080
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
+    - etcd:2379  # 使用docker服务名
   Key: mcp.rpc
 
 #UniPDF商业版许可证密钥

@@ -10,3 +10,13 @@ docker run -d --name my-postgres2 POSTGRES_USER=root -e POSTGRES_PASSWORD=123456
 docker run -it -d --name redis -p 6379:6379 redis --bind 0.0.0.0 --protected-mode no
 
 docker run -itd -p 6379:6379 --name redis -v /D/ProjectFiles/Docker/redis/redis.conf:/etc/redis/redis.conf -v /D/ProjectFiles/Docker/redis/data:/data redis redis-server /etc/redis/redis.conf
+
+docker部署
+
+启动项目
+
+docker-compose up -d
+
+停止项目
+
+docker-compose down -v
