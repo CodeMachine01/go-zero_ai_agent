@@ -25,7 +25,7 @@ func KnowledgeUploadHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		//验证PDF
 		if header.Header.Get("Content-Type") != "application/pdf" {
-			httpx.Error(w, errors.New("仅支持PDF问价"))
+			httpx.Error(w, errors.New("仅支持PDF格式"))
 			return
 		}
 		////提取文本

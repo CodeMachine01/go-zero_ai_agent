@@ -2,12 +2,18 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	rest.RestConf
-	MCP struct {
-		Endpoint string
+	//MCP struct {
+	//	Endpoint string
+	//}
+
+	RpcClients struct {
+		// zrpc.RpcClientConf是go-zero内置的RPC客户端配置结构体，已经包含Etcd等字段
+		MCP zrpc.RpcClientConf //MCP服务配置
 	}
 	OpenAI struct {
 		//基础配置
@@ -73,4 +79,8 @@ type Redis struct {
 	Port     int
 	Password string
 	DB       int
+}
+
+type MCPConfig struct {
+	Etcd zrpc.RpcClientConf
 }

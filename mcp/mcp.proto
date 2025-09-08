@@ -7,7 +7,7 @@ option go_package="./mcp";
 //PDF处理服务定义
 service PdfProcessor{
   //流式上传PDF并返回解析文本
-  rpc ExtractText(stream PdfRequest) returns (PdfResponse){}
+  rpc ExtractText(stream PdfRequest) returns (PdfResponse){}  //客户端流式rpc
 }
 
 //请求消息（分块传输）

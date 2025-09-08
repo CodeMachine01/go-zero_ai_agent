@@ -80,7 +80,7 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			case resp, ok := <-respChan:
 				if !ok {
 					//fmt.Fprint(w, "event: end\ndata:{}\n\n") //结束标记
-					flusher.Flush()
+					flusher.Flush() //通道关闭，将所有数据推送到客户端
 					return
 				}
 
@@ -93,9 +93,9 @@ func ChatHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				if err != nil {
 					return
 				}
-				flusher.Flush()
+				flusher.Flush() //实现流式传输，通常，HTTP 响应会被缓冲，等整个 Handler 执行完才一次性发送给客户端。Flush() 会强制将当前缓冲区中的所有数据立即发送到客户端，实现实时推送的效果。
 
-				if resp.IsLast {
+				if resp.IsLast { //收到最后一条消息，结束流式响应
 					return
 				}
 			}

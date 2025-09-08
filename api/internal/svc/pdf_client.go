@@ -14,12 +14,18 @@ type PdfClient struct {
 	client mcp.PdfProcessorClient
 }
 
-func NewPdfClient(endpoint string) *PdfClient {
+func NewPdfClient(mcpConf zrpc.RpcClientConf) *PdfClient {
 	//创建gRPC客户端连接
-	conn := zrpc.MustNewClient(zrpc.RpcClientConf{
-		Endpoints: []string{endpoint},
-		NonBlock:  true,
-	})
+	//conn := zrpc.MustNewClient(zrpc.RpcClientConf{
+	//	//Endpoints: []string{endpoint},
+	//	Etcd: discov.EtcdConf{
+	//		Hosts: []string{"127.0.0.1:2379"},
+	//		Key:   "mcp.rpc",
+	//	},
+	//	NonBlock: true, //非阻塞模式
+	//})
+
+	conn := zrpc.MustNewClient(mcpConf)
 
 	return &PdfClient{
 		client: mcp.NewPdfProcessorClient(conn.Conn()),

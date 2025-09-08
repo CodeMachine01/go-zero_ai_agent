@@ -31,9 +31,22 @@ func NewChatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatLogic {
 }
 
 func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResponse, error) {
+	// 创建一个无缓冲通道
 	ch := make(chan *types.ChatResponse)
 
+	//启动后台goroutine来处理业务逻辑
 	go func() {
+		////使用recover捕获goroutine的panic，防止单个请求崩溃影响整个服务
+		//defer func() {
+		//	if r := recover(); r != nil {
+		//		l.Logger.Errorf("Chat panic: %v", r)
+		//		ch <- &types.ChatResponse{
+		//			Content: "系统内部错误",
+		//			IsLast:  true,
+		//		}
+		//	}
+		//	close(ch)
+		//}()
 		defer close(ch)
 		//初始化状态管理
 		StateManager := NewStateManager(l.svcCtx)
@@ -90,7 +103,7 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 		//	Seed:             l.svcCtx.Config.OpenAI.Seed,
 		//}
 
-		//5.创建OpenAI请求（使用本地部署的大模型）
+		//5.创建OpenAI请求（使用云大模型）
 		request := openai.ChatCompletionRequest{
 			Model:       l.svcCtx.Config.OpenAI.Model,
 			Messages:    messages,
@@ -160,6 +173,7 @@ func (l *ChatLogic) Chat(req *types.InterviewAPPChatReq) (<-chan *types.ChatResp
 		}
 	}()
 
+	// 立即返回通道给调用者，避免阻塞
 	return ch, nil
 }
 

@@ -66,7 +66,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:       c,
 		OpenAIClient: openAIClient,
 		VectorStore:  vectorStore,
-		PdfClient:    NewPdfClient(c.MCP.Endpoint),
-		Redis:        rdb,
+		//PdfClient:    NewPdfClient(c.MCP.Endpoint),
+		PdfClient: NewPdfClient(c.RpcClients.MCP),
+		Redis:     rdb,
 	}
 }
